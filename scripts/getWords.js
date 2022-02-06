@@ -45,10 +45,3 @@ const asyncFs = require("fs").promises;
     console.error("error on writing JSON to file: ", e);
   }
 })();
-
-// data clean
-// (async () => {
-//     const words = JSON.parse((await asyncFs.readFile("../data/words.json")));
-
-//     console.log(words)
-// })()
