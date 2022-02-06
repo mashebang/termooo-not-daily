@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const path = require("puppeteer");
+const uniq = require("lodash.uniq")
 const asyncFs = require("fs").promises;
 
 // get words and save
@@ -24,7 +24,7 @@ const asyncFs = require("fs").promises;
       for (const word of wordsElements) {
         const textElementHandle = await word.getProperty("innerText");
         const currentWord = await textElementHandle.jsonValue();
-        words.push(currentWord);
+        words.push(currentWord.split(' '));
       }
     }
 
@@ -34,8 +34,12 @@ const asyncFs = require("fs").promises;
   }
 
   try {
-    const wordsAsJson = JSON.stringify(words, null, "\t");
-    console.log(wordsAsJson);
+    const normalizedWords = uniq(
+      words.flat()
+        .map(w => w.toLowerCase())
+        .filter(w => w && w.length && w.length <= 5)
+    );
+    const wordsAsJson = JSON.stringify(normalizedWords, null, "\t");
     await asyncFs.writeFile("data/words.json", wordsAsJson);
   } catch (e) {
     console.error("error on writing JSON to file: ", e);
